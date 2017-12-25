@@ -7,10 +7,14 @@ const {Todo} = require('./../models/todo');
 
 const todos = [{
     _id: new ObjectID(),
-    task: 'First task'
+    task: 'First task',
+    completed: false,
+    completedTime: null
 }, {
     _id: new ObjectID(),
-    task: 'Second task'
+    task: 'Second task',
+    completed: true,
+    completedTime: 10
 }];
 
 beforeEach((done) => {
@@ -128,4 +132,39 @@ describe('DELETE /todos/:id', () => {
             .expect(404)
             .end(done);
     })
+});
+
+describe('PATCH /todos/:id', () => {
+    it('should change todo', (done) => {
+        var hex = todos[0]._id.toHexString();
+        var task = 'Changed task';
+        request(app)
+            .patch(`/todos/${ hex }`)
+            .send({
+                completed: true,
+                task
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.completed).toBe(true);
+                expect(res.body.todo.task).toBe(task);
+                expect(res.body.todo.completedTime).toBeA('number');
+            })
+            .end(done);
+    });
+
+    it('should clear completedTime when completed set to false', (done) => {
+        var hex = todos[0]._id.toHexString();
+        request(app)
+            .patch(`/todos/${ hex }`)
+            .send({
+                completed: false
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.completed).toBe(false);
+                expect(res.body.todo.completedTime).toNotExist();
+            })
+            .end(done);
+    });
 });
