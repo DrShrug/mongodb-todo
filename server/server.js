@@ -12,6 +12,7 @@ var app = express();
 
 app.use(bodyParser.json());
 
+// Add new todo and return it
 app.post('/todos', (req, res) => {
     var todo = new Todo({
         task: req.body.task
@@ -24,6 +25,7 @@ app.post('/todos', (req, res) => {
     });
 });
 
+// Returns all todos
 app.get('/todos', (req, res) => {
     Todo.find().then((todos) => {
         res.send({todos});
@@ -32,6 +34,8 @@ app.get('/todos', (req, res) => {
     });
 });
 
+
+// Return todo by ID 
 app.get('/todos/:id', (req, res) => {
     var id = req.params.id;
 
@@ -46,6 +50,24 @@ app.get('/todos/:id', (req, res) => {
         res.send({todo})
     }, (e) => {
         res.status(400).send(e)
+    });
+});
+
+app.delete('/todos/:id', (req, res) => {
+    var id = req.params.id;
+
+    if (!ObjectID.isValid(id)){
+        return res.status(404).send();
+    }
+
+    Todo.findByIdAndRemove(id).then((todo) => {
+        if (!todo) {
+            return res.status(404).send();
+        }
+
+        res.status(200).send({todo});
+    }, (e) => {
+        res.status(400).send(e);
     });
 });
 
