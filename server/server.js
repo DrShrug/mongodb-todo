@@ -4,6 +4,9 @@ const {User} = require('./models/user');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const {ObjectID} = require('mongodb');
+
+const port = process.env.PORT || 3000
 
 var app = express();
 
@@ -29,8 +32,25 @@ app.get('/todos', (req, res) => {
     });
 });
 
-app.listen(3000, () => {
-    console.log('Server started on port 3000');
+app.get('/todos/:id', (req, res) => {
+    var id = req.params.id;
+
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    }
+
+    Todo.findById(id).then((todo) => {
+        if(!todo) {
+            return res.status(404).send()
+        }
+        res.send({todo})
+    }, (e) => {
+        res.status(400).send(e)
+    });
+});
+
+app.listen(port, () => {
+    console.log(`Server started on port ${ port }`);
 });
 
 module.exports = {
