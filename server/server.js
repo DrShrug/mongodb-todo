@@ -15,6 +15,10 @@ app.use(express.static(`${ __dirname }/public`));
 
 app.use(bodyParser.json());
 
+pp.get('/', (request, response) => {
+    response.render('index.html')
+});
+
 // Add new todo and return it
 app.post('/todos', (req, res) => {
     var todo = new Todo({
