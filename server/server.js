@@ -16,7 +16,7 @@ app.use(express.static(`${ __dirname }/public`));
 app.use(bodyParser.json());
 
 app.get('/', (request, response) => {
-    response.render('index.html')
+    response.render(`${ __dirname }/public/index.html`)
 });
 
 // Add new todo and return it
