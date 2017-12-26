@@ -15,7 +15,7 @@ app.use(express.static(`${ __dirname }/public`));
 
 app.use(bodyParser.json());
 
-pp.get('/', (request, response) => {
+app.get('/', (request, response) => {
     response.render('index.html')
 });
 
