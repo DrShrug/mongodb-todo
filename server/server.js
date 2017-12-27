@@ -19,6 +19,12 @@ app.get('/', (request, response) => {
     response.render(`${ __dirname }/public/index.html`)
 });
 
+app.get('/test', (req, res) => {
+    res.send({
+        test: 'Completed'
+    });
+});
+
 // Add new todo and return it
 app.post('/todos', (req, res) => {
     var todo = new Todo({
