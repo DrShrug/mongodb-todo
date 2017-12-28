@@ -6,6 +6,7 @@ const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
+const cors = require('cors');
 
 const port = process.env.PORT || 3000
 
@@ -14,6 +15,7 @@ var app = express();
 app.use(express.static(`${ __dirname }/public`));
 
 app.use(bodyParser.json());
+app.use(cors());
 
 app.get('/', (request, response) => {
     response.render(`${ __dirname }/public/index.html`)
