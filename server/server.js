@@ -30,7 +30,8 @@ app.get('/test', (req, res) => {
 // Add new todo and return it
 app.post('/todos', (req, res) => {
     var todo = new Todo({
-        task: req.body.task
+        task: req.body.task,
+        completedDateLimit: req.body.completedDateLimit
     });
 
     todo.save().then((doc) => {
@@ -88,7 +89,7 @@ app.delete('/todos/:id', (req, res) => {
 
 app.patch('/todos/:id', (req, res) => {
     var id = req.params.id;
-    var body = _.pick(req.body, ['task', 'completed']);
+    var body = _.pick(req.body, ['task', 'completed', 'completedDateLimit']);
     
     if (!ObjectID.isValid(id)){
         return res.status(404).send();

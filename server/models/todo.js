@@ -14,6 +14,11 @@ var Todo = mongoose.model('Todo', {
     completedTime: {
         type: Number,
         default: null
+    },
+    completedDateLimit: {
+        type: Number,
+        default: null,
+        required: true
     }
 });
 
