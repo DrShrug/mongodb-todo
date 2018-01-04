@@ -1,8 +1,11 @@
+require('./config/config');
+
 const {mongoose} = require('./db/mongoose');
 const {Todo} = require('./models/todo');
 const {User} = require('./models/user');
-const _ = require('lodash');
+const {authenticate} = require('./middleware/authenticate');
 
+const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
@@ -28,10 +31,12 @@ app.get('/test', (req, res) => {
 });
 
 // Add new todo and return it
-app.post('/todos', (req, res) => {
+app.post('/todos', authenticate, (req, res) => {
     var todo = new Todo({
         task: req.body.task,
-        completedDateLimit: req.body.completedDateLimit
+        completedDateLimit: req.body.completedDateLimit,
+        _creator: req.user._id,
+        creatorName: req.user.email
     });
 
     todo.save().then((doc) => {
@@ -42,8 +47,10 @@ app.post('/todos', (req, res) => {
 });
 
 // Returns all todos
-app.get('/todos', (req, res) => {
-    Todo.find().then((todos) => {
+app.get('/todos', authenticate, (req, res) => {
+    Todo.find({
+        _creator: req.user._id
+    }).then((todos) => {
         res.send({todos});
     }, (err) => {
         res.status(400).send(e);
@@ -52,14 +59,17 @@ app.get('/todos', (req, res) => {
 
 
 // Return todo by ID 
-app.get('/todos/:id', (req, res) => {
+app.get('/todos/:id', authenticate, (req, res) => {
     var id = req.params.id;
 
     if (!ObjectID.isValid(id)) {
         return res.status(404).send();
     }
 
-    Todo.findById(id).then((todo) => {
+    Todo.findOne({
+        _id: id,
+        _creator: req.user.id
+    }).then((todo) => {
         if(!todo) {
             return res.status(404).send()
         }
@@ -69,14 +79,17 @@ app.get('/todos/:id', (req, res) => {
     });
 });
 
-app.delete('/todos/:id', (req, res) => {
+app.delete('/todos/:id', authenticate, (req, res) => {
     var id = req.params.id;
 
     if (!ObjectID.isValid(id)){
         return res.status(404).send();
     }
 
-    Todo.findByIdAndRemove(id).then((todo) => {
+    Todo.findOneAndRemove({
+        _id: id,
+        _creator: req.user.id
+    }).then((todo) => {
         if (!todo) {
             return res.status(404).send();
         }
@@ -87,7 +100,7 @@ app.delete('/todos/:id', (req, res) => {
     });
 });
 
-app.patch('/todos/:id', (req, res) => {
+app.patch('/todos/:id', authenticate, (req, res) => {
     var id = req.params.id;
     var body = _.pick(req.body, ['task', 'completed', 'completedDateLimit']);
     
@@ -102,7 +115,10 @@ app.patch('/todos/:id', (req, res) => {
         body.completed = false;
     }
 
-    Todo.findByIdAndUpdate(id, { $set: body }, { new: true })
+    Todo.findOneAndUpdate({
+        _id: id,
+        _creator: req.user.id
+    }, { $set: body }, { new: true })
         .then((todo) => {
             if (!todo) {
                 return res.status(404).send();
@@ -113,15 +129,45 @@ app.patch('/todos/:id', (req, res) => {
         });
 });
 
+
+/*
+*   USER METHODS
+*/
 app.post('/users', (req, res) => {
     var body = _.pick(req.body, ['email', 'password'])
     var user = new User(body);
 
-    user.save().then((user) => {
-        res.send(user);
+    user.save().then(() => {
+        return user.generateAuthToken();
+    }).then((token) => {
+        res.header('x-auth', token).send(user);
     }).catch((e) => {
         res.status(400).send(e);
     });
+});
+
+app.post('/users/login', (req, res) => {
+    var body = _.pick(req.body, ['email', 'password']);
+    
+    User.findByCredentials(body.email, body.password).then((user) => {
+        user.generateAuthToken().then((token) => {
+            res.header('x-auth', token).send(user);
+        });
+    }).catch((e) => {
+        res.status(400).send();
+    });
+})
+
+app.delete('/users/me/token', authenticate, (req, res) => {
+    req.user.removeToken(req.token).then(() => {
+        res.status(200).send();
+    }, () => {
+        res.status(400).send();
+    });
+});
+
+app.get('/users/me', authenticate, (req, res) => {
+    res.send(req.user);
 });
 
 app.listen(port, () => {

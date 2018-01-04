@@ -9,12 +9,12 @@ const todos = [{
     _id: new ObjectID(),
     task: 'First task',
     completed: false,
-    completedTime: null
+    completedDateLimit: null
 }, {
     _id: new ObjectID(),
     task: 'Second task',
     completed: true,
-    completedTime: 10
+    completedDateLimit: 10
 }];
 
 beforeEach((done) => {
