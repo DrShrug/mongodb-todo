@@ -17,7 +17,7 @@ var app = express();
 
 app.use(bodyParser.json());
 app.use(cors({
-    allowedHeaders: ['x-auth', 'X-Auth', 'Content-Type']
+    exposedHeaders: ['x-auth', 'X-Auth', 'Content-Type']
 }));
 
 app.get('/', (request, response) => {
