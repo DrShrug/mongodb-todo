@@ -10,25 +10,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { ObjectID } = require('mongodb');
 const cors = require('cors');
+const history = require('connect-history-api-fallback');
+const connect = require('connect');
 
 const port = process.env.PORT || 3000
 
-var app = express();
+var app = express().use(history());
 
 app.use(bodyParser.json());
 app.use(cors({
   exposedHeaders: ['x-auth', 'X-Auth', 'Content-Type']
 }));
-
-app.get('/', (request, response) => {
-  response.render(`${__dirname}/public/index.html`)
-});
-
-app.get('/test', (req, res) => {
-  res.send({
-    test: 'Completed'
-  });
-});
 
 // Add new todo and return it
 app.post('/todos', authenticate, (req, res) => {
