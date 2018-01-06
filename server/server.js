@@ -20,15 +20,15 @@ app.use(cors({
   exposedHeaders: ['x-auth', 'X-Auth', 'Content-Type']
 }));
 
-app.get('/', (request, response) => {
-  response.render(`${__dirname}/public/index.html`)
-});
+// app.get('/', (request, response) => {
+//   response.render(`${__dirname}/public/index.html`)
+// });
 
-app.get('/test', (req, res) => {
-  res.send({
-    test: 'Completed'
-  });
-});
+// app.get('/test', (req, res) => {
+//   res.send({
+//     test: 'Completed'
+//   });
+// });
 
 // Add new todo and return it
 app.post('/todos', authenticate, (req, res) => {
