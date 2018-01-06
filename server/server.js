@@ -15,7 +15,7 @@ const connect = require('connect');
 
 const port = process.env.PORT || 3000
 
-var app = express().use(history());
+var app = express();
 
 app.use(bodyParser.json());
 app.use(cors({
