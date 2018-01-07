@@ -5,6 +5,10 @@ const {ObjectID} = require('mongodb');
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
+/*
+*   No longer used following the implementation of the user collection
+*/
+
 const todos = [{
     _id: new ObjectID(),
     task: 'First task',

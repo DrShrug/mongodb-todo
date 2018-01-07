@@ -10,12 +10,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { ObjectID } = require('mongodb');
 const cors = require('cors');
-const history = require('connect-history-api-fallback');
 
 const port = process.env.PORT || 3000
 
 var app = express();
-app.use(history());
 
 app.use(bodyParser.json());
 app.use(cors({
