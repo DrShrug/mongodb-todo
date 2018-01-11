@@ -158,7 +158,15 @@ app.delete('/users/me/logout', authenticate, (req, res) => {
 });
 
 app.get('/users/me', authenticate, (req, res) => {
-  res.send('no');
+  var userToJson = req.user.toJSON();
+  Todo.find({
+    _creator: req.user._id
+  }).then((todos) => {
+    userToJson.todos = todos;
+  }, (err) => {
+    res.status(400).send(e);
+  });
+  res.send(userToJson);
 });
 
 app.listen(port, () => {
