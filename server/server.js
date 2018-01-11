@@ -166,7 +166,7 @@ app.get('/users/me', authenticate, (req, res) => {
   }, (err) => {
     res.status(400).send(e);
   });
-  res.send(req.user);
+  res.send(userToReturn);
 });
 
 app.listen(port, () => {
