@@ -159,11 +159,15 @@ app.delete('/users/me/logout', authenticate, (req, res) => {
 
 app.get('/users/me', authenticate, (req, res) => {
   var userToReturn = req.user;
-  userToReturn.test = 'test';
+  Object.assign(userToReturn, {
+    test: 1,
+  });
   Todo.find({
     _creator: req.user._id
   }).then((todos) => {
-    req.user.todos = { todos };
+    Object.assign(userToReturn, {
+      todos
+    });
   }, (err) => {
     res.status(400).send(e);
   });
