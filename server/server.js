@@ -164,11 +164,11 @@ app.get('/users/me', authenticate, (req, res) => {
     _creator: req.user._id
   }).then((todos) => {
     userToJson.todos = todos.toObject();
-    
+    res.send(userToJson);
   }, (err) => {
     res.status(400).send(e);
   });
-  res.send(userToJson);
+  
 });
 
 app.listen(port, () => {
