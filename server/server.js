@@ -165,7 +165,7 @@ app.get('/users/me', authenticate, (req, res) => {
   }).then((todos) => {
     console.log(todos);
     userToJson.todos = todos.toObject();
-    res.send(userToJson);
+    res.send(todos.toObject());
     
   }, (err) => {
     res.status(400).send(e);
