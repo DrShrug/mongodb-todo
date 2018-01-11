@@ -124,7 +124,7 @@ userSchema.methods.toJSON = function () {
 	var user = this;
 	var userObject = user.toObject();
 
-	return _.pick(user, ['_id', 'email'])
+	return _.pick(userObject, ['_id', 'email'])
 };
 
 var User = mongoose.model('User', userSchema);
