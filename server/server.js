@@ -158,7 +158,8 @@ app.delete('/users/me/logout', authenticate, (req, res) => {
 });
 
 app.get('/users/me', authenticate, (req, res) => {
-  var userToJson = req.user.toJSON();
+  var userToJson = req.user.toObject();
+  userToJson.test = 'test';
   Todo.find({
     _creator: req.user._id
   }).then((todos) => {
