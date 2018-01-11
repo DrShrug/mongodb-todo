@@ -163,6 +163,10 @@ app.get('/users/me', authenticate, (req, res) => {
   Todo.find({
     _creator: req.user._id
   }).then((todos) => {
+    userToJson.todotest = {
+      test: '1',
+      thing: 'asd',
+    };
     userToJson.todos = todos;
   }, (err) => {
     res.status(400).send(e);
