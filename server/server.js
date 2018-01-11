@@ -165,10 +165,12 @@ app.get('/users/me', authenticate, (req, res) => {
   }).then((todos) => {
     console.log(todos);
     userToJson.todos = todos.toObject();
+    res.send(userToJson);
+    
   }, (err) => {
     res.status(400).send(e);
   });
-  res.send(userToJson);
+  // res.send(userToJson);
 });
 
 app.listen(port, () => {
