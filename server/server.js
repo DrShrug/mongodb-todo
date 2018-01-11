@@ -158,6 +158,14 @@ app.delete('/users/me/logout', authenticate, (req, res) => {
 });
 
 app.get('/users/me', authenticate, (req, res) => {
+  var userToReturn = req.user;
+  Todo.find({
+    _creator: req.user._id
+  }).then((todos) => {
+    req.user.todos = { todos };
+  }, (err) => {
+    res.status(400).send(e);
+  });
   res.send(req.user);
 });
 
