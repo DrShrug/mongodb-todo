@@ -163,12 +163,12 @@ app.get('/users/me', authenticate, (req, res) => {
   Todo.find({
     _creator: req.user._id
   }).then((todos) => {
-    userToJson.todos = todos;
-    res.send(userToJson);
+    userToJson.todos = todos.toObject();
+    
   }, (err) => {
     res.status(400).send(e);
   });
-  
+  res.send(userToJson);
 });
 
 app.listen(port, () => {
