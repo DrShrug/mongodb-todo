@@ -7,15 +7,15 @@ var Todo = mongoose.model('Todo', {
         minlength: 1,
         trim: true
     },
-    completed: {
+    isCompleted: {
         type: Boolean,
         default: false
     },
-    completedTime: {
+    completedAtTime: {
         type: Number,
         default: null
     },
-    completedDateLimit: {
+    completeByTime: {
         type: Number,
         default: null,
         required: true

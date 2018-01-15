@@ -25,7 +25,7 @@ app.use(cors({
 app.post('/todos', authenticate, (req, res) => {
   var todo = new Todo({
     task: req.body.task,
-    completedDateLimit: req.body.completedDateLimit,
+    completeByTime: req.body.completeByTime,
     _creator: req.user._id,
     creatorName: req.user.email
   });
@@ -93,7 +93,7 @@ app.delete('/todos/:id', authenticate, (req, res) => {
 
 app.patch('/todos/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  var body = _.pick(req.body, ['task', 'completed', 'completedDateLimit']);
+  var body = _.pick(req.body, ['task', 'completed', 'completeByTime']);
 
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
