@@ -93,17 +93,17 @@ app.delete('/todos/:id', authenticate, (req, res) => {
 
 app.patch('/todos/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  var body = _.pick(req.body, ['task', 'completed', 'completeByTime']);
+  var body = _.pick(req.body, ['task', 'isCompleted', 'completeByTime']);
 
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
   }
 
-  if (_.isBoolean(body.completed) && body.completed) {
+  if (_.isBoolean(body.isCompleted) && body.isCompleted) {
     body.completedTime = new Date().getTime();
   } else {
     body.completedTime = null;
-    body.completed = false;
+    body.isCompleted = false;
   }
 
   Todo.findOneAndUpdate({
