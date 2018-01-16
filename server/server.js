@@ -3,6 +3,7 @@ require('./config/config');
 const { mongoose } = require('./db/mongoose');
 const { Todo } = require('./models/todo');
 const { User } = require('./models/user');
+const { Category } = require('./models/category');
 const { authenticate } = require('./middleware/authenticate');
 
 const _ = require('lodash');
@@ -20,6 +21,72 @@ app.use(cors({
   exposedHeaders: ['x-auth', 'X-Auth', 'Content-Type']
 }));
 
+app.post('/categories', authenticate, (req, res) => {
+  var category = new Category({
+    categoryName: req.body.categoryName,
+    _creator: req.user._id,
+    creatorName: req.user.email
+  });
+
+  category.save().then((doc) => {
+    res.send(doc);
+  }, (error) => {
+    res.status(400).send(error);
+  })
+});
+
+app.get('/categories', authenticate, (req, res) => {
+  Category.find({
+    _creator: req.user._id
+  }).then((categories) => {
+    res.send({ categories });
+  }, (err) => {
+    res.status(400).send(e);
+  });
+});
+
+app.patch('/categories/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ['categoryName']);
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Category.findOneAndUpdate({
+    _id: id,
+    _creator: req.user.id
+  }, { $set: body }, { new: true})
+  .then((category) => {
+    if (!category) {
+      return res.status(404).send();
+    }
+    res.send({ category });
+  }).catch((e) => {
+    res.status(400).send();
+  })
+});
+
+app.delete('/categories/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Category.findOneAndRemove({
+    _id: id,
+    _creator: req.user.id
+  }).then((category) => {
+    if (!category) {
+      return res.status(404).send();
+    }
+    res.status(200).send({ category });
+  }, (e) => {
+    res.status(400).send(e);
+  });
+
+});
 
 // Add new todo and return it
 app.post('/todos', authenticate, (req, res) => {
@@ -27,7 +94,9 @@ app.post('/todos', authenticate, (req, res) => {
     task: req.body.task,
     completeByTime: req.body.completeByTime,
     _creator: req.user._id,
-    creatorName: req.user.email
+    creatorName: req.user.email,
+    _category: req.body._category,
+    categoryName: req.body.categoryName
   });
 
   todo.save().then((doc) => {
@@ -93,7 +162,7 @@ app.delete('/todos/:id', authenticate, (req, res) => {
 
 app.patch('/todos/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  var body = _.pick(req.body, ['task', 'isCompleted', 'completeByTime']);
+  var body = _.pick(req.body, ['task', 'isCompleted', 'completeByTime', '_category', 'categoryName']);
 
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();

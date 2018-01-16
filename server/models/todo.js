@@ -27,7 +27,15 @@ var Todo = mongoose.model('Todo', {
     creatorName: {
         required: true,
         type: String
-    }
+    },
+    _category: {
+        required: true,
+        type: mongoose.Schema.Types.ObjectId
+    },
+    categoryName: {
+        required: true,
+        type: String
+    },
 });
 
 module.exports = {
