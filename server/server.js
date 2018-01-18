@@ -81,11 +81,6 @@ app.delete('/categories/:id', authenticate, (req, res) => {
     if (!category) {
       return res.status(404).send();
     }
-    Todo.find({
-      _category: id
-    }, (err, data) => {
-      res.status(200).send(data);
-    })
     res.status(200).send({ category });
   }, (e) => {
     res.status(400).send(e);
