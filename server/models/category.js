@@ -24,7 +24,9 @@ categorySchema.pre('findOneAndRemove', function (next) {
     //     todo.remove();
     // });
     // next();
-    Todo.remove({ _category: this._id}).exec();
+    console.log('Start');
+    Todo.deleteMany({ _category: this._id}, (err) => console.log(e));
+    console.log('End')
     next();
 });
 
