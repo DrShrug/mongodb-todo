@@ -74,9 +74,8 @@ app.delete('/categories/:id', authenticate, (req, res) => {
     return res.status(404).send();
   }
 
-  Category.findOneAndRemove({
+  Category.findByIdAndRemove({
     _id: id,
-    _creator: req.user.id
   }).then((category) => {
     if (!category) {
       return res.status(404).send();
