@@ -20,7 +20,9 @@ var categorySchema = mongoose.Schema({
 });
 
 categorySchema.pre('findOneAndRemove', function (next) {
-    Todo.remove({ _category: this._id}).exec();
+    Todo.findOne({ _category: this._id}, (err, todo) => {
+        todo.remove();
+    });
     next();
 });
 
