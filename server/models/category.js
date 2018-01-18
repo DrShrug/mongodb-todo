@@ -20,20 +20,12 @@ var categorySchema = mongoose.Schema({
 });
 
 categorySchema.pre('findOneAndRemove', function (next) {
-    // Todo.findOne({ _category: this._id}, (err, todo) => {
-    //     todo.remove();
+    // Todo.find({ _category: this._conditions._id._id }, (err, docs) => {
+    //     if (err)
+    //         console.log(err);
+    //     console.log(docs);
     // });
-    // next();
-    console.log('Start');
-    console.log(this._conditions._id._id);
-    console.log(this);
-    Todo.find({}, (err, docs) => {
-        if (err)
-            console.log(err);
-        console.log(docs);
-    });
-    Todo.deleteMany({ _category: this._id}, (err) => console.log(err));
-    console.log('End')
+    Todo.deleteMany({ _category: this._conditions._id._id }, (err) => console.log(err));
     next();
 });
 
