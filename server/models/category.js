@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const { Todo } = require('./todo');
 
-var Category = mongoose.model('Category', {
+var categorySchema = mongoose.Schema({
     categoryName: {
         type: String,
         unique: true,
@@ -17,6 +18,13 @@ var Category = mongoose.model('Category', {
         type: String
     },
 });
+
+categorySchema.pre('findOneAndRemove', function (next) {
+    Todo.remove({ _category: this._id}).exec();
+    next();
+});
+
+var Category = mongoose.model('Category', categorySchema);
 
 module.exports = {
     Category

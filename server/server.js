@@ -85,7 +85,6 @@ app.delete('/categories/:id', authenticate, (req, res) => {
   }, (e) => {
     res.status(400).send(e);
   });
-
 });
 
 // Add new todo and return it
