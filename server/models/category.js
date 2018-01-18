@@ -26,6 +26,7 @@ categorySchema.pre('findOneAndRemove', function (next) {
     // next();
     console.log('Start');
     console.log(this._id);
+    console.log(this);
     Todo.find({}, (err, docs) => {
         if (err)
             console.log(err);
