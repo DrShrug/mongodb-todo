@@ -84,12 +84,11 @@ app.delete('/categories/:id', authenticate, (req, res) => {
     Todo.deleteMany({
       _category: id
     }).then((todo) => {
-      res.status(200).send({ todo })
+      res.status(200).send(todo);
     });
   }, (e) => {
     res.status(400).send(e);
   });
-
 });
 
 // Add new todo and return it
