@@ -81,11 +81,12 @@ app.delete('/categories/:id', authenticate, (req, res) => {
     if (!category) {
       return res.status(404).send();
     }
-    Todo.remove({
+    Todo.removeToken({
       _category: id
-    }).then((todo) => {
-      res.status(200).send(todo);
+    }, (err) => {
+      res.status(400).send(err);
     });
+    res.status(200).send({category});
   }, (e) => {
     res.status(400).send(e);
   });
