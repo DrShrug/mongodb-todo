@@ -50,6 +50,7 @@ typings/
 
 # Self
 playground/
+config.json
 
 # Output of 'npm pack'
 *.tgz
