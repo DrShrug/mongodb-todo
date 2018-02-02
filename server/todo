@@ -1,0 +1,2 @@
+Fix category so that it only checks for duplicates for the 
+currently connected user rather than every user.
