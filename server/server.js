@@ -322,7 +322,46 @@ app.patch('/groups/addmember/:id', authenticate, (req, res) => {
   });
 });
 
-app.patch
+app.patch('/groups/removemember/:id', authenticate, (req, res) => {
+  var groupId = req.params.id;
+  if (!ObjectID.isValid(groupId)) {
+    return res.status(404).send();
+  }
+  Group.findOne({ _id: groupId}).then((group) => {
+    if (!group) {
+      return res.status(404).send();
+    }
+    
+    if (group._owner.equals(req.body.userIdToRemove)) {
+      return res.status(400).send({ message: 'Cannot remove group owner as member'});
+    }
+
+    Group.findOneAndUpdate({ _id: groupId }, {
+      $pull: {
+        "members": req.body.userIdToRemove
+      }
+    }).then((group) => {
+      if (!group) {
+        return res.status(404).send();
+      }
+      User.findOneAndUpdate({ _id: req.body.userIdToRemove}, {
+        $pull: {
+          "groups": group._id
+        }
+      }).then((user) => {
+        if (!user) {
+          return res.status(404).send();
+        }
+        res.send(_.pick(user, ['_id', 'username', 'displayName', 'email']));
+      }).catch((e) => {
+        res.status(400).send(e);
+      })
+      
+    }).catch((e) => {
+      res.status(400).send(e);
+    });
+  });
+});
 
 app.delete('/groups/:id', authenticate, (req, res) => {
   var id = req.params.id;
