@@ -41,6 +41,10 @@ var userSchema = mongoose.Schema({
 		require: true,
 		minlength: 6
 	},
+	groups: [{ 
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Group'
+	}],
 	tokens: [{
 		access: {
 				type: String,
@@ -54,6 +58,8 @@ var userSchema = mongoose.Schema({
 }, {
 	usePushEach: true,
 });
+
+userSchema.index({ 'groups': 1 });
 
 userSchema.methods.generateAuthToken = function () {
 	var user = this;

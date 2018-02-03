@@ -3,6 +3,7 @@ require('./config/config');
 const { mongoose } = require('./db/mongoose');
 const { Todo } = require('./models/todo');
 const { User } = require('./models/user');
+const { Group } = require('./models/group');
 const { Category } = require('./models/category');
 const { authenticate } = require('./middleware/authenticate');
 
@@ -232,6 +233,117 @@ app.get('/users/me', authenticate, (req, res) => {
     userToJson.todoList = {todos};
     res.send(userToJson);
   }, (err) => {
+    res.status(400).send(e);
+  });
+});
+
+/*
+* GROUP METHODS
+*/
+app.get('/groups', authenticate, (req, res) => {
+  Group.find({ members: req.user._id }).then((groups) => {
+    res.send(groups);
+  }, (err) => {
+    res.status(400).send(e);
+  });
+});
+
+app.post('/groups', authenticate, (req, res) => {
+  var newId = new ObjectID();
+  var group = new Group({
+    _id: newId,
+    groupName: req.body.groupName,
+    _owner: req.user._id
+  });
+  group.members.push(req.user._id);
+  group.save().then((doc) => {
+    User.findOneAndUpdate({ _id: req.user._id }, {
+      $push: {
+        "groups": newId
+      }
+    }).then((user) => {
+      if (!user) {
+        return res.status(404).send();
+      }
+    }).catch((e) => {
+      res.status(400).send(e);
+    })
+    res.send(doc);
+  }, (error) => {
+    res.status(400).send(error);
+  })
+});
+
+app.patch('/groups/addmember/:id', authenticate, (req, res) => {
+  var groupId = req.params.id;
+  if (!ObjectID.isValid(groupId)) {
+    return res.status(404).send();
+  }
+
+  User.findById(req.body.userIdToAdd, (err, user) => {
+    if (!user) {
+      return res.status(404).send();
+    }
+    
+    var alreadyInGroup = user.groups.some((group) => {
+      return group.equals(groupId);
+    })
+
+    if (!alreadyInGroup) {
+      Group.findOneAndUpdate({ _id: groupId }, { 
+        $push: {
+          "members": req.body.userIdToAdd
+        }
+      }).then((group) => {
+        if (!group) {
+          return res.status(404).send();
+        }
+        
+        User.findOneAndUpdate({ _id: req.body.userIdToAdd }, {
+          $push: {
+            "groups": group._id
+          }
+        }).then((user) => {
+          if (!user) {
+            return res.status(404).send();
+          }
+          
+        }).catch((e) => {
+          res.status(400).send(e);
+        })
+
+        res.send(_.pick(user, ['_id', 'username', 'displayName', 'email']));
+      }).catch((e) => {
+        res.status(400).send(e);
+      })
+    } else {
+      return res.status(400).send({ message: 'Already in group' });
+    }
+  });
+});
+
+app.patch
+
+app.delete('/groups/:id', authenticate, (req, res) => {
+  var id = req.params.id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Group.findByIdAndRemove({
+    _id: id,
+  }).then((group) => {
+    if (!group) {
+      return res.status(404).send();
+    }
+    User.update({
+      _id: { $in: group.members }
+    }, { $pull: { groups: group._id }}, {
+      multi: true
+    }).catch((e) => res.status(400).send());
+    res.status(200).send({ group });
+  }, (e) => {
     res.status(400).send(e);
   });
 });
