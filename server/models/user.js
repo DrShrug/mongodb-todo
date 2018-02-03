@@ -1,27 +1,40 @@
 const mongoose = require('mongoose');
-const isEmail = require('validator/lib/isEmail');
+const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 
-
 var userSchema = mongoose.Schema({
 	username: {
 		type: String,
-		required: false,
+		unique: true,
+		required: true,
 		minlength: 1,
-		trim: true
+		maxlength: 30,
+		trim: true,
+		validate: [{
+			validator: value => validator.isAlphanumeric(value),
+			message: 'Alpha-numeric characters only'
+		}]
 	},
 	email: {
 		type: String,
 		required: true,
 		minlength: 1,
+		maxlength: 30,
 		trim: true,
 		unique: true,
 		validate: [{
-				validator: value => isEmail(value),
-				message: '{VALUE} is not a valid email'
+				validator: value => validator.isEmail(value),
+				message: 'Invalid email'
 		}]
+	},
+	displayName: {
+		type: String,
+		required: true,
+		minlength: 1,
+		maxlength: 30,
+		trim: true,
 	},
 	password: {
 		type: String,
@@ -126,7 +139,7 @@ userSchema.methods.toJSON = function () {
 	var user = this;
 	var userObject = user.toObject();
 
-	return _.pick(userObject, ['_id', 'email'])
+	return _.pick(userObject, ['_id', 'username', 'displayName', 'email'])
 };
 
 var User = mongoose.model('User', userSchema);

@@ -192,7 +192,7 @@ app.patch('/todos/:id', authenticate, (req, res) => {
 *   USER METHODS
 */
 app.post('/users', (req, res) => {
-  var body = _.pick(req.body, ['email', 'password'])
+  var body = _.pick(req.body, ['username', 'displayName', 'email', 'password'])
   var user = new User(body);
 
   user.save().then(() => {
