@@ -17,6 +17,10 @@ var groupSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
+    categories: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
+    }]
 });
 
 groupSchema.index({ 'members': 1 });

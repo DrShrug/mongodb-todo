@@ -134,8 +134,8 @@ userSchema.pre('save', function (next) {
 			bcrypt.hash(user.password, salt, (err, hash) => {
 				user.password = hash;
 				next();
+			});
 		});
-	});
 	} else {
 		next();
 	}

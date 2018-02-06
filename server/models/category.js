@@ -4,7 +4,6 @@ const { Todo } = require('./todo');
 var categorySchema = mongoose.Schema({
     categoryName: {
         type: String,
-        unique: true,
         required: true,
         minlength: 1,
         trim: true
@@ -13,10 +12,10 @@ var categorySchema = mongoose.Schema({
         required: true,
         type: mongoose.Schema.Types.ObjectId
     },
-    creatorName: {
+    _group: {
         required: true,
-        type: String
-    },
+        type: mongoose.Schema.Types.ObjectId
+    }
 });
 
 categorySchema.pre('findOneAndRemove', function (next) {
