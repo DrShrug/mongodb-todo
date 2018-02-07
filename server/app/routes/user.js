@@ -12,7 +12,6 @@ var router = express.Router();
 
 // [POST] New user
 router.post('/users', (req, res) => {
-
   var body = _.pick(req.body, ['username', 'displayName', 'email', 'password'])
   var user = new User(body);
 
