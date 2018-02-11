@@ -34,7 +34,7 @@ router.get('/:groupId/todos', authenticate, (req, res) => {
   }).then((todos) => {
     res.send({ todos });
   }, (err) => {
-    res.status(400).send(e);
+    res.status(400).send(err);
   });
 });
 

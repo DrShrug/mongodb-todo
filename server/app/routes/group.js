@@ -109,6 +109,9 @@ router.patch('/groups/removemember/:id', authenticate, (req, res) => {
     if (group._owner.equals(req.body.userIdToRemove)) {
       return res.status(400).send({ message: 'Cannot remove group owner as member'});
     }
+    if (group.members.includes(req.body.userIdToRemove)) {
+      return res.status(400).send({ message: 'User is not in group'});
+    }
 
     Group.findOneAndUpdate({ _id: groupId }, {
       $pull: {

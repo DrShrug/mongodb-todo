@@ -46,7 +46,7 @@ router.delete('/users/me/logout', authenticate, (req, res) => {
   });
 });
 
-// [GET] User info
+// [GET] User info, UNUSED
 router.get('/users/me', authenticate, (req, res) => {
   var userToJson = req.user.toJSON();
   Todo.find({
@@ -56,6 +56,16 @@ router.get('/users/me', authenticate, (req, res) => {
     res.send(userToJson);
   }, (err) => {
     res.status(400).send(e);
+  });
+});
+
+// [GET] All users
+router.get('/users', authenticate, (req, res) => {
+  User.find({}, { password: 0, tokens: 0 }).then((users) => {
+    if (!users) {
+      return res.status(400).send('Error fetching users');
+    }
+    res.send({ users });
   });
 });
 

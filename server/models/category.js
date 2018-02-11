@@ -19,7 +19,7 @@ var categorySchema = mongoose.Schema({
 });
 
 categorySchema.pre('findOneAndRemove', function (next) {
-    Todo.deleteMany({ _category: this._conditions._id._id }, (err) => console.log(err));
+    Todo.deleteMany({ _category: this._conditions._id._id });
     next();
 });
 
