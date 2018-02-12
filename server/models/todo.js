@@ -24,18 +24,14 @@ var Todo = mongoose.model('Todo', {
         required: true,
         type: mongoose.Schema.Types.ObjectId
     },
-    creatorName: {
-        required: true,
-        type: String
-    },
     _category: {
         required: true,
         type: mongoose.Schema.Types.ObjectId
     },
-    categoryName: {
+    _group: {
         required: true,
-        type: String
-    },
+        type: mongoose.Schema.Types.ObjectId
+    }
 });
 
 module.exports = {
