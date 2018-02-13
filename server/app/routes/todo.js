@@ -96,7 +96,6 @@ router.patch('/todos/:id', authenticate, (req, res) => {
 
   Todo.findOneAndUpdate({
     _id: id,
-    _creator: req.user.id
   }, { $set: body }, { new: true })
     .then((todo) => {
       if (!todo) {
