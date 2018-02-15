@@ -46,8 +46,13 @@ io.on('connection', function(socket) {
   });
 
   // Called when a todo has been added/changed/deleted
-  socket.on('todoChanges', () => {
-    io.emit('todoChanges');
+  socket.on('todoChanges', (notif) => {
+    io.emit('todoChanges', notif);
+  });
+
+  // Called when a category has been added/deleted
+  socket.on('categoryChanges', (notif) => {
+    io.emit('categoryChanges', notif);
   });
 })
 
