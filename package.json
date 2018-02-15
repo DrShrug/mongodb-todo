@@ -23,6 +23,7 @@
     "lodash": "^4.17.4",
     "mongodb": "^3.0.0",
     "mongoose": "^4.13.7",
+    "socket.io": "^2.0.4",
     "validator": "^9.2.0"
   },
   "devDependencies": {
