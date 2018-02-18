@@ -18,13 +18,14 @@ const corsWhitelist = ['http://localhost:8080',  'https://nodejs-todo-frontend.h
 'https://nodejs-vue-js-todo.herokuapp.com/'];
 app.use(bodyParser.json());
 app.use(cors({
-  origin: function (origin, callback) {
-    if (corsWhitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  },
+  // origin: function (origin, callback) {
+  //   if (corsWhitelist.indexOf(origin) !== -1) {
+  //     callback(null, true)
+  //   } else {
+  //     callback(new Error('Not allowed by CORS'))
+  //   }
+  // },
+  origin: '*',
   exposedHeaders: ['x-auth', 'X-Auth', 'Content-Type'],
   credentials: true,
 }));
