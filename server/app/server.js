@@ -14,18 +14,18 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 
-const corsWhitelist = ['http://localhost:8080', 'https://nodejs-todo-frontend.herokuapp.com/'];
+const corsWhitelist = ['http://localhost:8080',  'https://nodejs-todo-frontend.herokuapp.com/'];
 app.use(bodyParser.json());
 app.use(cors({
-  exposedHeaders: ['x-auth', 'X-Auth', 'Content-Type'],
-  credentials: true,
   origin: function (origin, callback) {
     if (corsWhitelist.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
       callback(new Error('Not allowed by CORS'))
     }
-  }
+  },
+  exposedHeaders: ['x-auth', 'X-Auth', 'Content-Type'],
+  credentials: true,
 }));
 
 app.use('/', routes);
