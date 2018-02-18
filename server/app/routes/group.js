@@ -148,8 +148,9 @@ router.delete('/groups/:id', authenticate, (req, res) => {
     return res.status(404).send();
   }
 
-  Group.findByIdAndRemove({
+  Group.findOneAndRemove({
     _id: id,
+    _owner: req.user._id
   }).then((group) => {
     if (!group) {
       return res.status(404).send();

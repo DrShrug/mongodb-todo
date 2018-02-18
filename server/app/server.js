@@ -56,6 +56,11 @@ io.on('connection', function(socket) {
   socket.on('categoryChanges', (notif) => {
     io.emit('categoryChanges', notif);
   });
+
+  // Called when a group is deleted
+  socket.on('groupDeleted', (group) => {
+    io.emit('groupDeleted', group);
+  });
 })
 
 server.listen(port, () => {
