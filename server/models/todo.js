@@ -7,6 +7,12 @@ var Todo = mongoose.model('Todo', {
         minlength: 1,
         trim: true
     },
+    description: {
+        type: String,
+        required: false,
+        trim: true,
+        default: ''
+    },
     isCompleted: {
         type: Boolean,
         default: false

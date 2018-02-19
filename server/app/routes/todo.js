@@ -14,6 +14,7 @@ var router = express.Router();
 router.post('/:groupId/:categoryId/todos', authenticate, (req, res) => {
   var todo = new Todo({
     task: req.body.task,
+    description: req.body.description,
     completeByTime: req.body.completeByTime,
     _creator: req.user._id,
     _category: req.params.categoryId,
@@ -81,7 +82,7 @@ router.delete('/todos/:id', authenticate, (req, res) => {
 // [PATCH] Todo from todo Id
 router.patch('/todos/:id', authenticate, (req, res) => {
   var id = req.params.id;
-  var body = _.pick(req.body, ['task', 'isCompleted', 'completeByTime', '_category', 'categoryName']);
+  var body = _.pick(req.body, ['task', 'description', 'isCompleted', 'completeByTime', '_category', 'categoryName']);
 
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
