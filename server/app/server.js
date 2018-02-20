@@ -18,6 +18,7 @@ const corsWhitelist = ['http://localhost:8080',  'https://nodejs-todo-frontend.h
 'https://nodejs-vue-js-todo.herokuapp.com/'];
 app.use(bodyParser.json());
 app.use(cors({
+  // Whitelist doesn't work when deployed to Heroku
   // origin: function (origin, callback) {
   //   if (corsWhitelist.indexOf(origin) !== -1) {
   //     callback(null, true)
@@ -35,6 +36,10 @@ app.use('/', routes);
 
 io.on('connection', function(socket) {
   console.log('User connected');
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
 
   // Called when a group is created and when a user gets added
   // Used to update the groups list page

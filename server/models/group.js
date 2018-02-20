@@ -10,6 +10,13 @@ var groupSchema = mongoose.Schema({
     maxlength: 30,
     trim: true
   },
+  description: {
+    type: String,
+    required: true,
+    minlength: 1,
+    maxlength: 50,
+    trim: true
+  },
   _owner: {
     required: true,
     type: mongoose.Schema.Types.ObjectId
@@ -27,7 +34,7 @@ var groupSchema = mongoose.Schema({
 groupSchema.index({ 'members': 1 });
 
 groupSchema.pre('findOneAndRemove', function (next) {
-  Category.find({ _group: this._conditions._id._id }).then((categories) => {
+  Category.find({ _group: this._conditions._id }).then((categories) => {
     categories.forEach((category) => {
       category.remove();
     });

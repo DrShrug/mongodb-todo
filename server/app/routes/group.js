@@ -25,6 +25,7 @@ router.post('/groups', authenticate, (req, res) => {
   var group = new Group({
     _id: newId,
     groupName: req.body.groupName,
+    description: req.body.description,
     _owner: req.user._id
   });
   group.members.push(req.user._id);
