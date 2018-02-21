@@ -8,7 +8,8 @@ const cors = require('cors');
 
 const port = process.env.PORT || 3000
 
-var test = 'test';
+var test = 'new test';
+
 
 var app = express();
 var server = require('http').createServer(app);
