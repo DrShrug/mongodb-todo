@@ -24,7 +24,7 @@ const users = [
     displayName: 'user 1 display',
     password: 'user1pwd',
     groups: [{
-      idGroup1,
+      _id: idGroup1,
     }],
     tokens: [{
       access: 'auth',
@@ -40,8 +40,8 @@ const users = [
     displayName: 'user 2 display',
     password: 'user2pwd',
     groups: [{
-      idGroup1,
-      idGroup2
+      _id: idGroup1,
+      _id: idGroup2
     }],
     tokens: [{
       access: 'auth',
@@ -54,7 +54,8 @@ const todos = [
   // Todo 1
   {
     _id: new ObjectID(),
-    text: 'Created by user 1',
+    task: 'Created by user 1',
+    completeByTime: 1519249292280,
     _creator: idUser1,
     _group: idGroup1,
     _category: idCategory1
@@ -65,7 +66,8 @@ const todos = [
     _id: new ObjectID(),
     task: 'Created by user 2',
     isCompleted: true,
-    completedAtTime: 333,
+    completeByTime: 1519249248395,
+    completedAtTime: 1519249248900,
     _creator: idUser2,
     _group: idGroup2,
     _category: idCategory2
@@ -80,10 +82,10 @@ const groups = [
     description: 'Created by user 1',
     _owner: idUser1,
     members: [{
-      idUser1,
-      idUser2
+      _id: idUser1,
+      _id: idUser2
     }],
-    categories: [{ idCategory1 }]
+    categories: [{ _id: idCategory1 }]
   },
 
   // Group 2
@@ -93,9 +95,9 @@ const groups = [
     description: 'Created by user 2',
     _owner: idUser2,
     members: [{
-      idUser2
+      _id: idUser2
     }],
-    categories: [{ idCategory2 }]
+    categories: [{ _id: idCategory2 }]
   },
 ]
 
@@ -110,10 +112,10 @@ const categories = [
 
   // Category 2
   {
-    _id: idCategory1,
-    categoryName: 'Category 1',
-    _creator: idUser1,
-    _group: idGroup1
+    _id: idCategory2,
+    categoryName: 'Category 2',
+    _creator: idUser2,
+    _group: idGroup2
   },
 ]
 
