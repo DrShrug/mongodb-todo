@@ -1,12 +1,10 @@
 require('./../config/config');
-// require('./socket')(io);
 const routes = require('./routes/index');
 const { mongoose } = require('./../db/mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { ObjectID } = require('mongodb');
 const cors = require('cors');
-
 
 const port = process.env.PORT || 3000
 
