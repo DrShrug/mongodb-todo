@@ -22,7 +22,7 @@ router.post('/:groupId/:categoryId/todos', authenticate, (req, res) => {
   });
 
   todo.save().then((doc) => {
-    res.send(doc);
+    res.status(200).send(doc);
   }, (error) => {
     res.status(400).send(error);
   });
