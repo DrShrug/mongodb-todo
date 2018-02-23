@@ -100,23 +100,24 @@ router.patch('/groups/addmember/:id', authenticate, (req, res) => {
 router.patch('/groups/removemember/:id', authenticate, (req, res) => {
   var groupId = req.params.id;
   if (!ObjectID.isValid(groupId)) {
-    return res.status(404).send();
+    return res.status(404).send('User id not valid');
   }
   Group.findOne({ _id: groupId}).then((group) => {
     if (!group) {
-      return res.status(404).send();
+      return res.status(404).send('Group id not found');
     }
     
     if (group._owner.equals(req.body.userIdToRemove)) {
       return res.status(400).send({ message: 'Cannot remove group owner as member'});
     }
-    if (group.members.includes(req.body.userIdToRemove)) {
+
+    if (!Array.from(group.members, member => member.toString()).includes(req.body.userIdToRemove)) {
       return res.status(400).send({ message: 'User is not in group'});
     }
 
     Group.findOneAndUpdate({ _id: groupId }, {
       $pull: {
-        "members": req.body.userIdToRemove
+        'members': req.body.userIdToRemove
       }
     }).then((group) => {
       if (!group) {
@@ -128,7 +129,7 @@ router.patch('/groups/removemember/:id', authenticate, (req, res) => {
         }
       }).then((user) => {
         if (!user) {
-          return res.status(404).send();
+          return res.status(404).send('User not found');
         }
         res.send(_.pick(user, ['_id', 'username', 'displayName', 'email']));
       }).catch((e) => {

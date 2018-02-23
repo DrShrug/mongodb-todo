@@ -240,3 +240,216 @@ describe('Category Calls', () => {
       });
   });
 });
+
+describe('Group Calls', () => {
+  it('should deny access', (done) => {
+    request(app)
+      .get('/groups')
+      .expect(401)
+      .end(done);
+  });
+
+  it('should create a new group', (done) => {
+    var groupName = "New group";
+    var description = "New description";
+
+    request(app)
+      .post('/groups')
+      .set('x-auth', users[0].tokens[0].token)
+      .send({ groupName, description })
+      .expect(200)
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+
+        Group.find().then((groups) => {
+          expect(groups.length).toBe(3);
+          done();
+        }).catch(e => done(e));
+      });
+  });
+
+  it('should add a member to a group', (done) => {
+    var groupId = groups[1]._id;
+    var userIdToAdd = users[0]._id;
+
+    request(app)
+      .patch(`/groups/addmember/${groupId}`)
+      .set('x-auth', users[0].tokens[0].token)
+      .expect(200)
+      .send({ userIdToAdd })
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+
+        Group.findById(groupId).then((group) => {
+          expect(group.members).toInclude(userIdToAdd);
+          done();
+        }).catch(e => done(e));
+      });
+  });
+
+  it('should not add a member already in group', (done) => {
+    var groupId = groups[0]._id;
+    var userIdToAdd = users[0]._id;
+
+    request(app)
+      .patch(`/groups/addmember/${groupId}`)
+      .set('x-auth', users[0].tokens[0].token)
+      .expect(400)
+      .send({ userIdToAdd })
+      .end(done);
+  });
+
+  it('should remove a member from a group', (done) => {
+    var groupId = groups[0]._id;
+    var userIdToRemove = users[1]._id;
+
+    request(app)
+      .patch(`/groups/removemember/${groupId}`)
+      .set('x-auth', users[0].tokens[0].token)
+      .expect(200)
+      .send({userIdToRemove})
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+
+        Group.findById(groupId).then((group) => {
+          expect(group.members).toExclude(userIdToRemove)
+          done()
+        }).catch(e => done(e));
+      })
+  });
+
+  it('should not remove a member thats not in a group', (done) => {
+    var groupId = groups[1]._id;
+    var userIdToRemove = users[2]._id;
+
+    request(app)
+      .patch(`/groups/removemember/${groupId}`)
+      .set('x-auth', users[0].tokens[0].token)
+      .expect(400)
+      .send({userIdToRemove})
+      .end(done);
+  });
+
+  it('should delete a group', (done) => {
+    var groupId = groups[0]._id;
+
+    request(app)
+      .delete(`/groups/${groupId}`)
+      .set('x-auth', users[0].tokens[0].token)
+      .expect(200)
+      .end((err, res) => {
+        Group.findById(groupId).then((group) => {
+          expect(group).toNotExist();
+          done()
+        }).catch(e => done(e));
+      });
+  });
+
+  it('should not delete a group as non owner', (done) => {
+    var groupId = groups[0]._id;
+
+    request(app)
+      .delete(`/groups/${groupId}`)
+      .set('x-auth', users[1].tokens[0].token)
+      .expect(404)
+      .end(done)
+  });
+});
+
+describe('User Calls', () => {
+  it('should create a new user', (done) => {
+    var email = 'new@new.com'
+    request(app)
+      .post('/users')
+      .send({
+        email,
+        username: 'uName',
+        displayName: 'dName',
+        password: 'somePass'
+      })
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+
+        User.find().then((users) => {
+          expect(users.length).toBe(4);
+          expect(users[users.length - 1].email).toBe(email);
+          done()
+        }).catch(e => done(e));
+      });
+  });
+
+  it('should not create a new user', (done) => {
+    request(app)
+      .post('/users')
+      .send({ email: 'email@gmail.com' })
+      .expect(400)
+      .end(done);
+  });
+
+  it('should authenticate a user', (done) => {
+    request(app)
+      .post('/users/login')
+      .send({
+        email: 'user1@test.com',
+        password: 'user1pwd'
+      })
+      .expect(200)
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+
+        User.findById(users[0]._id).then((user) => {
+          expect(user.tokens.length).toBe(2);
+          done();
+        }).catch(e => done(e));
+      })
+  });
+
+  it('should not authenticate a user', (done) => {
+    request(app)
+      .post('/users/login')
+      .send({
+        email: 'user1@test.com',
+        password: 'absolutelynothepassword'
+      })
+      .expect(400)
+      .end(done);
+  });
+
+  it('should log out a user', (done) => {
+    request(app)
+      .delete('/users/me/logout')
+      .set('x-auth', users[0].tokens[0].token)
+      .expect(200)
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+
+        User.findById(users[0]._id).then((user) => {
+          expect(user.tokens.length).toBe(0);
+          done()
+        }).catch(e => done(e));
+      })
+  });
+
+  it('should get all users', (done) => {
+    request(app)
+      .get('/users')
+      .set('x-auth', users[0].tokens[0].token)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.users.length).toBe(3);
+      })
+      .end(done);
+  });
+});

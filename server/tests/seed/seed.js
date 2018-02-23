@@ -8,6 +8,7 @@ const { Category } = require('./../../models/category');
 
 const idUser1 = new ObjectID();
 const idUser2 = new ObjectID();
+const idUser3 = new ObjectID();
 
 const idGroup1 = new ObjectID();
 const idGroup2 = new ObjectID();
@@ -41,11 +42,29 @@ const users = [
     password: 'user2pwd',
     groups: [{
       _id: idGroup1,
+    }, {
+      _id: idGroup2
+    }
+  ],
+    tokens: [{
+      access: 'auth',
+      token: jwt.sign({_id: idUser2, access: 'auth'}, process.env.JWT_SECRET).toString()
+    }]
+  },
+
+  // User 3
+  {
+    _id: idUser3,
+    email: 'user3@test.com',
+    username: 'user3',
+    displayName: 'user 3 display',
+    password: 'user3pwd',
+    groups: [{
       _id: idGroup2
     }],
     tokens: [{
       access: 'auth',
-      token: jwt.sign({_id: idUser2, access: 'auth'}, process.env.JWT_SECRET).toString()
+      token: jwt.sign({_id: idUser3, access: 'auth'}, process.env.JWT_SECRET).toString()
     }]
   }
 ];
@@ -82,8 +101,11 @@ const groups = [
     description: 'Created by user 1',
     _owner: idUser1,
     members: [{
-      _id: idUser1,
-      _id: idUser2
+      _id: idUser1, 
+    }, {
+      _id: idUser2,
+    }, {
+      _id: idUser3
     }],
     categories: [{ _id: idCategory1 }]
   },
@@ -123,8 +145,9 @@ const populateUsers = (done) => {
   User.remove({}).then(() => {
     var userOne = new User(users[0]).save();
     var userTwo = new User(users[1]).save();
+    var userThree = new User(users[2]).save();
 
-    return Promise.all([userOne, userTwo])
+    return Promise.all([userOne, userTwo, userThree])
   }).then(() => done());
 };
 
